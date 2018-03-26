@@ -44,7 +44,7 @@ int getThresh(cv::Mat image){
 
 }
 
-//深度优先递归遍历当前目录下文件夹和文件及子文件夹和文夹，同时批量处理当前目录下面所有照片
+//深度优先递归遍历当前目录下文件夹和文件及子文件夹和文夹
 void DfsFolder(string path)
 {
 	_finddata_t file_info;
@@ -75,14 +75,19 @@ void DfsFolder(string path)
 		{
 			//不是目录文件就需要访问
 
-			check::detctColor((path + '/' + file_info.name).c_str(), 19);
-			cout << file_info.name << endl;
+			check::detctColor((path + '/' + file_info.name).c_str(), 75, 40);
+			//cout << file_info.name << endl;
 		}
 	} while (!_findnext(handle, &file_info));  //返回0则遍历完  
 	//关闭文件句柄  
 	_findclose(handle);
 }
 
+void test(string hsource, string htarget, string tail){
+	cout << endl << "hsource" << hsource << endl;
+	cout << "htarget" << htarget << endl;
+	cout << "tail" << tail << endl;
+}
 
 void DfsFolder(string hsource, string htarget, string tail)
 {
@@ -159,7 +164,34 @@ string WChar2Ansi(LPCWSTR pwszSrc)
 
 	return strTemp;
 }
+/*
+void readImgNamefromFile(char* fileName, vector <string> &imgNames)
+{
 
+imgNames.clear();
+WIN32_FIND_DATA file;
+int i = 0;
+char tempFilePath[MAX_PATH + 1];
+char tempFileName[50];
+sprintf_s(tempFilePath, "%s/*", fileName);
+WCHAR wstr[MAX_PATH] = { 0 };
+MultiByteToWideChar(CP_ACP, 0, tempFilePath, -1, wstr, sizeof(wstr));
+HANDLE handle = FindFirstFile(wstr, &file);
+if (handle != INVALID_HANDLE_VALUE)
+{
+FindNextFile(handle, &file);
+FindNextFile(handle, &file);
+do
+{
+sprintf_s(tempFileName, "%s", fileName);
+imgNames.push_back(WChar2Ansi(file.cFileName));
+imgNames[i].insert(0, tempFileName);
+i++;
+} while (FindNextFile(handle, &file));
+}
+FindClose(handle);
+}
+*/
 void clusterBinaryImage(cv::Mat &inImage, cv::Mat& outImage, int clusterCount){
 
 	float step = 255 / (clusterCount - 1);
@@ -198,19 +230,35 @@ void clusterBinaryImage(cv::Mat &inImage, cv::Mat& outImage, int clusterCount){
 	}
 
 	threshold(img1, outImage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+	//Mat element = getStructuringElement(2, Size(15, 15));
+	//morphologyEx(img1, img1, MORPH_CLOSE, element);
+	//string name = to_string(a) + ".jpg";
+	//imwrite(name, img1);
+
 }
 
 int main(){
-	
-	char* path = "E:\\项目\\木材检测\\照片\\test\\D (19)\\2.jpg";
-	
-	
-	//check::detctColor(path, 19);//（65,19），（89,4）
-	DfsFolder("E:\\项目\\木材检测\\照片\\debug");
-	
-	//cout << "test end" << endl;
-	//system("pause");
 
+	char* path;
+	path;//1，2，3，4，5，6
+
+	//char* path1 = "E:\\项目\\木材检测\\照片\\test2\\D (20)\\2.jpg";
+	char* path2 = "E:\\项目\\木材检测\\照片\\test\\D (19)\\2.jpg";
+	check::detctColor(path2, 19);//（65,19），（89,4）
+	//check::detctColor(path1);
+
+
+	//Histogram1D histogramTools;
+	//string hsource = "E:\\项目\\木材检测\\照片\\test";
+	//string htarget = "E:\\项目\\木材检测\\照片\\testget";
+	//string tail = "";
+
+	//dt();
+	//cv::Mat grayImage = cv::imread(path2);
+	//clusterBinaryImage(grayImage, grayImage, 4);
+	//cv::imshow("g",grayImage);
+	cv::waitKey(0);
+	system("pause");
 
 	return 0;
 }
