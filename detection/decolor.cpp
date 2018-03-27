@@ -1,4 +1,5 @@
 #include"decolor.h"
+#include"RectMerge.h"
 using namespace std;
 
 
@@ -231,7 +232,73 @@ void check::detctColor(const char* path, int background){
 	cout << rects.size() << endl;
 	//rects = filterBuddingRect(rects);
 
+	rects=rectMerge::mergeRect(rects);
 	cutting(image, rects, path);
+
+
+	cv::Mat rectImage = image.clone();
+
+	
+	for (int i = 0; i < rects.size(); i++){
+		rectangle(rectImage, rects[i], Scalar(0, 0, 255), 1, 1, 0);//用矩形画矩形窗  
+	}
+	save(rectImage, path, 0);
+	//cv::imshow("rect", rectImage);
+	//cv::waitKey(0);
+	
+	cout <<" "<< rects.size()<<" ";
+	cout << path << " cutted" << endl;
+}
+
+void check::detctColorErode(const char* path, int background){
+	//读取图片
+	cv::Mat image = cv::imread(path);
+	if (image.empty()){
+		cout << "image is empty\n";
+		return;
+	}
+
+	//cv::imshow("image", image);
+
+	//转化一下成为灰度图像
+	cv::Mat grayImage;
+	cv::cvtColor(image, grayImage, CV_BGR2GRAY);
+	//cv::imshow("GRAYImage", grayImage);
+
+
+	//二值化图片
+	cv::Mat binaryImage = getBinaryImage(grayImage, background);
+
+
+	threshold(grayImage, binaryImage, 0, 255, CV_THRESH_OTSU | CV_THRESH_BINARY_INV);
+	
+	cv::Mat edgeImage;
+	Mat element = getStructuringElement(0, Size(8, 8));//MORPH_CROSS=1 MORPH_ELLIPSE=2 MORPH_RECT=0
+	erode(binaryImage, edgeImage, element);
+	save(edgeImage, path, 0);
+	edgeImage = getClearEdge(edgeImage);
+	
+
+	//有异常存在vector无法自动析构
+	//cv::vector<cv::vector<cv::Point>> contours; //= edgeTools.getContours(edgeImage)
+	vector<Mat> contours(1000);//主要是为了在这边析构合适的地点，使得当return时候这个vector可以找到正确的内存位置从而被正确的析构
+	cv::findContours(edgeImage, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+	/*
+	CV_CHAIN_APPROX_NONE存储所有的轮廓点，相邻的两个点的像素位置差不超过1，即max（abs（x1-x2），abs（y2-y1））==1
+	CV_CHAIN_APPROX_SIMPLE压缩水平方向，垂直方向，对角线方向的元素，只保留该方向的终点坐标，例如一个矩形轮廓只需4个点来保存轮廓信息
+	CV_CHAIN_APPROX_TC89_L1，CV_CHAIN_APPROX_TC89_KCOS使用teh-Chinl chain 近似算法
+
+	CV_RETR_EXTERNAL表示只检测外轮廓
+	CV_RETR_TREE建立一个等级树结构的轮廓
+	*/
+
+
+	//获得轮廓外接矩阵，同时将那些细小的矩形过滤
+	vector<Rect> rects = getBuddingRect(image, contours);
+	//cout << rects.size() << endl;
+	//rects = filterBuddingRect(rects);
+
+	//cutting(image, rects, path);
 
 
 	cv::Mat rectImage = image.clone();
@@ -241,11 +308,9 @@ void check::detctColor(const char* path, int background){
 		rectangle(rectImage, rects[i], Scalar(0, 0, 255), 1, 1, 0);//用矩形画矩形窗  
 	}
 
-	//cv::imshow("rect", rectImage);
-	save(rectImage, path, 0);
-	cout << rects.size();
+	//save(rectImage, path, 0);
+	cout << path<<" cutover\n";
 }
-
 void check::detctColor(const char* path){
 
 	//读取图片

@@ -31,6 +31,10 @@ namespace check{
 	vector<Rect> getBuddingRect(cv::Mat& image, vector<vector<cv::Point>>& contours);
 	vector<Rect> getBuddingRect(cv::Mat& image, vector<Mat>& contours);
 	void detctColor(const char* path, int background = 40);
+
+	//用8*8的矩形腐蚀
+	void detctColorErode(const char* path, int background = 40);
+
 	void detctColor(const char* path);
 
 	//hsource+tail是处理的图片目录，htarget+tail是得到的缺陷目录
