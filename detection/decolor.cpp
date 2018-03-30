@@ -229,7 +229,7 @@ void check::detctColor(const char* path, int background){
 
 	//获得轮廓外接矩阵，同时将那些细小的矩形过滤
 	vector<Rect> rects = getBuddingRect(image, contours);
-	cout << rects.size() << endl;
+	cout << rects.size();
 	//rects = filterBuddingRect(rects);
 
 	rects=rectMerge::mergeRect(rects);

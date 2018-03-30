@@ -90,7 +90,7 @@ int main(){
 	
 	
 	//check::detctColor(path, 19);//£¨65,19£©£¬£¨89,4£©
-	DfsFolder("E:\\ÏîÄ¿\\Ä¾²Ä¼ì²â\\ÕÕÆ¬\\testRectErode");
+	DfsFolder("E:\\ÏîÄ¿\\Ä¾²Ä¼ì²â\\ÕÕÆ¬\\testRectErode\\A (24)");
 	
 	//cout << "test end" << endl;
 	system("pause");
