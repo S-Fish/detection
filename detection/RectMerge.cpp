@@ -162,7 +162,6 @@ vector<Rect> rectMerge::mergeRect(vector<Rect>& rects){
 	
 	//相交的合并
 	vector<Rect> result = intersectMerge(rects);
-	//互相包括的合并
 
 	return result;
 

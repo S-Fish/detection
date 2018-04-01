@@ -120,11 +120,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="decolor.h" />
+    <ClInclude Include="extractGLCMFeatures.h" />
     <ClInclude Include="histogram1D.h" />
     <ClInclude Include="RectMerge.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="decolor.cpp" />
+    <ClCompile Include="extractCLCMFeatures.cpp" />
     <ClCompile Include="histogram1D.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RectMerge.cpp" />

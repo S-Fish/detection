@@ -1,5 +1,6 @@
 #include"histogram1D.h"
 #include"decolor.h"
+#include"extractGLCMFeatures.h"
 #include<io.h>
 #include<string>
 #include <iostream>  
@@ -12,11 +13,12 @@
 
 typedef void(*ophandle)(const char*, int, int);
 using namespace std;
+using namespace extractGLCM;
 
 
 int getThresh(cv::Mat image){
 	int a = 1;
-	float coeffic[254];
+//	float coeffic[254];
 	Histogram1D histogramTools;
 	cv::Mat gaussImage;
 	//GaussianBlur(image, gaussImage, cv::Size(5, 5), BORDER_DEFAULT);
@@ -84,15 +86,46 @@ void DfsFolder(string path)
 }
 
 
+
+void testComMat(){
+	GLCM glcm(4, GLCM_ANGLE_DIGONAL_135);//0£¬1£¬2£¬3
+	uchar mat[6][6] = { {0,0,0,3,1,1},
+						{0,0,0,0,1,1},
+						{0,0,4,0,1,1},
+						{0,0,0,0,1,1},
+						{2,2,2,2,3,3}, 
+						{2,2,2,2,3,3},
+
+						//{1,2,2,1,0},
+
+	};
+	for (int i = 0; i < 6; i++){
+		for (int j = 0; j < 6; j++){
+			mat[i][j] = mat[i][j] * 64;
+		}
+	}
+
+
+	Mat test(Size(6,6),CV_8UC1,mat);//Size(cols,rows)ÎªrowsÐÐcolsÁÐ
+	//cvtColor(test, test, CV_BGR2GRAY);
+	double f[14];
+	glcm.getFeatures(test,f);
+	for (int i = 0; i < 5; i++){
+		cout << i << ":" << f[i] << endl;
+	}
+}
+
 int main(){
 	
 	char* path = "E:\\ÏîÄ¿\\Ä¾²Ä¼ì²â\\ÕÕÆ¬\\test\\D (19)\\2.jpg";
 	
 	
 	//check::detctColor(path, 19);//£¨65,19£©£¬£¨89,4£©
-	DfsFolder("E:\\ÏîÄ¿\\Ä¾²Ä¼ì²â\\ÕÕÆ¬\\testRectErode\\A (24)");
+	//DfsFolder("E:\\ÏîÄ¿\\Ä¾²Ä¼ì²â\\ÕÕÆ¬\\testRectErode");
 	
 	//cout << "test end" << endl;
+	testComMat();
+	
 	system("pause");
 
 
