@@ -24,6 +24,12 @@
     <ClInclude Include="RectMerge.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="extractGLCMFeatures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseMySql.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="decolor.cpp">
@@ -36,6 +42,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RectMerge.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="extractCLCMFeatures.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="databaseMySql.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

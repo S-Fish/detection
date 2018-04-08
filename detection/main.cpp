@@ -1,6 +1,7 @@
 #include"histogram1D.h"
 #include"decolor.h"
 #include"extractGLCMFeatures.h"
+#include"databaseMySql.h"
 #include<io.h>
 #include<string>
 #include <iostream>  
@@ -115,6 +116,72 @@ void testComMat(){
 	}
 }
 
+
+void testMySql(){
+
+	MySQLC mysql("localhost","root","1234","jq_teacher_test",3306);
+	string sql;
+
+
+	//不使用SelectResult类手动释放MYSQL_RES
+	sql = "insert t_teaching_material(id) values(5)";
+
+	mysql.query(sql);
+	sql = "delete from t_teaching_material where id=5";
+	mysql.query(sql);
+	
+
+	MYSQL_RES* result;
+
+	sql = "select * from t_teaching_material";
+
+	result = mysql.select(sql);
+
+
+	//各个字段（列名）
+	unsigned int fieldcount = mysql_num_fields(result);
+	MYSQL_FIELD *field = NULL;
+	for (unsigned int i = 0; i < fieldcount; i++) {
+		field = mysql_fetch_field_direct(result, i);
+		cout << field->name << "\t\t";
+	}
+
+	//各行数据
+	MYSQL_ROW row = NULL;
+	row = mysql_fetch_row(result);
+	while (NULL != row){
+		for (int i = 0; i < fieldcount; i++){
+
+			//MySql的NULL和空值不一样，NULL转化C++是一串空格，空值转化过来为NULL
+			if(row[i]!=NULL) cout <<row[i] << "\t\t";
+		}
+		cout << endl;
+		row = mysql_fetch_row(result);
+	}
+
+
+	if (result != NULL){
+		mysql_free_result(result);
+	}
+
+	
+
+	/*
+	//使用SelectResult进行内存释放，自动释放MYSQL_RES
+	cout << "sql1:" << endl;
+	sql = "select * from t_teaching_material";
+
+	SelectResult res;
+	mysql.select(sql,res);
+	cout << "sql2:" << endl;
+	sql = "select* from t_roles";
+	mysql.select(sql, res);
+
+	cout << "end----------------" << endl;
+	*/
+
+}
+
 int main(){
 	
 	char* path = "E:\\项目\\木材检测\\照片\\test\\D (19)\\2.jpg";
@@ -124,8 +191,10 @@ int main(){
 	//DfsFolder("E:\\项目\\木材检测\\照片\\testRectErode");
 	
 	//cout << "test end" << endl;
-	testComMat();
-	
+	//testComMat();
+	testMySql();
+
+
 	system("pause");
 
 
