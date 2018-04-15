@@ -1,5 +1,5 @@
 #include"databaseMySql.h"
-
+#include<sstream>
 
 
 //MySQLC
@@ -93,6 +93,10 @@ bool MySQLC::query(string sql){
 	
 }
 
+MYSQL* MySQLC::getConnect(){
+
+	return this->mysqlCon;
+}
 
 MYSQL_RES* MySQLC::select(string sql){
 
@@ -117,9 +121,6 @@ MYSQL_RES* MySQLC::select(string sql){
 
 	return result;
 }
-
-
-
 
 bool MySQLC::select(string sql,SelectResult& res){
 
@@ -146,6 +147,8 @@ bool MySQLC::select(string sql,SelectResult& res){
 
 	return 1;
 }
+
+
 
 //SelctResult
 SelectResult::~SelectResult(){
@@ -175,4 +178,147 @@ void SelectResult::setResult(MYSQL_RES* result){
 		this->result = NULL;
 	}
 	this->result =  result;
+}
+
+MYSQL_RES* SelectResult::getResult(){
+
+	return this->result;
+}
+
+//InsertWood
+InsertWood::InsertWood(){
+	this->id = " ";
+}
+
+InsertWood::~InsertWood(){
+}
+
+//木材的长宽高，和木材照片的路径
+string InsertWood::insertWood(MySQLC& mysqlc, float length, float width, float height, string id, string path){
+
+	string result = "";
+	string mysql = "";
+	if (id.compare("") == 0) {
+		mysql = "insert t_woods(length,width,height) values(" + to_string(length) + "," + to_string(width) + "," + to_string(height) + ");";
+		//如果执行成功
+		if (mysqlc.query(mysql) == 1){
+			MYSQL* myconnect = mysqlc.getConnect();
+			unsigned int insertId = mysql_insert_id(myconnect);
+			this->id = to_string(insertId);
+			result = this->id;
+		}
+	}else
+	{
+		mysql = "insert t_woods(id,length,width,height) values("+id+","+ to_string(length) + "," + to_string(width) + "," + to_string(height) + ");";
+		//如果执行成功
+		if (mysqlc.query(mysql) == 1){
+			this->id = id;
+		}
+	}
+
+	cout << "id:" << this->id << endl;
+
+	return result;
+}
+
+bool InsertWood::insertFeature(MySQLC& mysqlc, string featureName, const vector<float>& features, const string& woodId ){
+	bool result = 0;
+	string mysql = "insert t_feature(wood_id,feature_name,feature_value) values(";
+	int i = 0;
+	string fs;
+	ostringstream os;
+
+	//判断id是不是有效
+	if (woodId.compare("") != 0) {//是不是传来了woodid 
+		os << woodId; 
+	}else
+	{
+		if (id.compare("") != 0) { //上一条的id是不是合法的
+			os << id;
+		}
+		else
+		{
+			return result;
+		}
+	}
+
+	os<< ",'" << featureName << "','";
+	for (i = 0; i < features.size()-1; i++){
+		os << features.at(i) << " ";
+	}
+	os << features.at(i)<<"')";
+	mysql = mysql + os.str();
+
+	//如果执行成功
+	if (mysqlc.query(mysql) == 1){
+		result = 1;
+	}
+	else
+	{
+		id = "";
+	}
+	
+	return result;
+}
+
+
+//isDefctive检测判断是不是有缺陷
+bool InsertWood::updateWood(MySQLC& mysqlc, bool isDefctive, const string& woodId){
+
+	return 1;
+}
+
+
+
+
+//readWood
+ReadWood::ReadWood(){}
+ReadWood::~ReadWood(){}
+
+
+
+vector<WoodFeature> ReadWood::getAllWood(MySQLC& mysqlc,const string& featureName){
+	vector<WoodFeature> features;
+
+	string sql = "select wood_id,feature_value from t_feature where feature_name='"+featureName+"'";
+	SelectResult sqlResult;
+
+	mysqlc.select(sql, sqlResult);
+
+	
+
+	//unsigned int fieldcount = mysql_num_fields(sqlResult.getResult());
+
+	//各行数据
+	MYSQL_ROW row = NULL;
+	row = mysql_fetch_row(sqlResult.getResult());
+	while (NULL != row){
+		WoodFeature f;
+		
+		//获得id
+		if(NULL!=row[0]) f.id = row[0];
+
+		//获得特征值
+		if (NULL != row[1]){
+			string s = row[1];
+			
+			//字符串流创建
+			istringstream inputfloat(s);
+			vector<float> featurefloat;//特征向量
+			float buffer = 0;//缓冲的
+			while (inputfloat >> buffer){
+			
+				featurefloat.push_back(buffer);
+			}
+
+			f.features=featurefloat ;
+		}
+
+		features.push_back(f);
+
+		row = mysql_fetch_row(sqlResult.getResult());
+	}
+
+
+	return features;
 }

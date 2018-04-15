@@ -11,6 +11,7 @@
 #include <opencv2/ml/ml.hpp>  
 #include <stdio.h>
 #include <windows.h>
+#include<fstream>
 
 typedef void(*ophandle)(const char*, int, int);
 using namespace std;
@@ -119,10 +120,10 @@ void testComMat(){
 
 void testMySql(){
 
-	MySQLC mysql("localhost","root","1234","jq_teacher_test",3306);
-	string sql;
+	MySQLC mysql("localhost","root","1234","wood_detection",3306);
+	//string sql;
 
-
+	/*
 	//不使用SelectResult类手动释放MYSQL_RES
 	sql = "insert t_teaching_material(id) values(5)";
 
@@ -164,7 +165,7 @@ void testMySql(){
 		mysql_free_result(result);
 	}
 
-	
+	*/
 
 	/*
 	//使用SelectResult进行内存释放，自动释放MYSQL_RES
@@ -179,8 +180,105 @@ void testMySql(){
 
 	cout << "end----------------" << endl;
 	*/
+	
+	
+	//插入
+	InsertWood insert;
+
+	vector<vector<float>> a;
+	for (int i = 0; i < 10; i++){
+		vector<float> t;
+		t.push_back(i);
+		t.push_back(1.2);
+		t.push_back(i-0.1);
+		t.push_back(i+2);
+		a.push_back(t);
+	}
+
+	for (int i = 1; i <= 10; i++){
+		insert.insertWood(mysql, 0, 0, 0);
+		insert.insertFeature(mysql, "s", a.at(i-1));
+	}
+	
+
+	
+	//查询
+	ReadWood readWood;
+
+	vector<WoodFeature> S = readWood.getAllWood(mysql, "s");
+
+	for (int i = 0; i < S.size(); i++){
+		WoodFeature temp = S.at(i);
+		cout << temp.id << ":";
+		for (int j = 0; j < S.at(i).features.size(); j++){
+			cout << S.at(i).features.at(j) << " ";
+		}
+		cout << endl;
+	
+	}
+	
 
 }
+
+
+//读文件特征
+void readfile(string& path){
+	ifstream file(path);
+
+	float a=0;
+	int i = 0;
+	while (!file.eof()){
+		file >> a;
+		cout <<i<<":"<< a <<endl;
+		i++;
+	}
+
+
+	file.close();
+
+
+}
+
+//遍历文件
+void DfsFolderGetfile(string path)
+{
+	_finddata_t file_info;
+
+	string current_path = path + "/*.*"; //也可以用/*来匹配所有  
+
+	int handle = _findfirst(current_path.c_str(), &file_info);
+	//返回值为-1则查找失败  
+	if (-1 == handle)
+	{
+		cout << "cannot match the path" << endl;
+		return;
+	}
+
+	do
+	{
+		//判断是否子目录  
+		if (file_info.attrib == _A_SUBDIR)
+		{
+			//递归遍历子目录  
+
+			//cout << file_info.name << endl;
+
+			if (strcmp(file_info.name, "..") != 0 && strcmp(file_info.name, ".") != 0)  //.是当前目录，..是上层目录，必须排除掉这两种情况  
+				DfsFolder(path + '/' + file_info.name); //再windows下可以用\\转义分隔符，不推荐  
+		}
+		else
+		{
+			//不是目录文件就需要访问
+			//check::detctColorErode((path + '/' + file_info.name).c_str(), 19);
+			readfile(path + '/' + file_info.name);
+			//cout << file_info.name << endl;
+		}
+	} while (!_findnext(handle, &file_info));  //返回0则遍历完  
+	//关闭文件句柄  
+	_findclose(handle);
+}
+
+
 
 int main(){
 	
@@ -192,7 +290,9 @@ int main(){
 	
 	//cout << "test end" << endl;
 	//testComMat();
-	testMySql();
+	//testMySql();
+	string patht = "E:/项目/木材检测/新建文件夹/特征值/1.txt";
+	readfile(patht);
 
 
 	system("pause");
