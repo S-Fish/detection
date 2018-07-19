@@ -12,12 +12,12 @@
 #include <stdio.h>
 #include <windows.h>
 #include<fstream>
-
+#include"cluster.h"
 typedef void(*ophandle)(const char*, int, int);
 using namespace std;
 using namespace extractGLCM;
 
-
+string message = "";
 int getThresh(cv::Mat image){
 	int a = 1;
 //	float coeffic[254];
@@ -282,22 +282,39 @@ void DfsFolderGetfile(string path)
 
 int main(){
 	
-	char* path = "E:\\项目\\木材检测\\照片\\test\\D (19)\\2.jpg";
+	char* path = "E:\\项目\\木材检测\\新建文件夹\\测试文件\\分析";
 	
 	
 	//check::detctColor(path, 19);//（65,19），（89,4）
-	//DfsFolder("E:\\项目\\木材检测\\照片\\testRectErode");
+	DfsFolder(path);
 	
 	//cout << "test end" << endl;
 	//testComMat();
 	//testMySql();
-	string patht = "E:/项目/木材检测/新建文件夹/特征值/1.txt";
-	readfile(patht);
+	//string patht = "E:/项目/木材检测/新建文件夹/特征值/1.txt";
+	//readfile(patht);
+	
+	/*
+	char * test = "E:\\项目\\木材检测\\照片\\IMAGE\\A (18)\\1test.jpg";
+	cv::Mat image;
+	image = cv::imread(test,0);
+	cv::Mat result;
+	cluster::pretreat(image, result);
+	cv::threshold(result, result, 0, 255, THRESH_OTSU);
+	cv::imshow("test",result);
+	cv::threshold(image, image, 0, 255, THRESH_OTSU);
+	cv::imshow("image", image);
+	cv::waitKey(0);
+	system("pause");
+	*/
+	string fileName = path;
+	fileName = fileName + "\\result.txt";
 
+	ofstream os(fileName);
+	os << message;
+	os.close();
 
 	system("pause");
-
-
 	return 0;
 }
 

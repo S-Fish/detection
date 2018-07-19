@@ -7,8 +7,15 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-namespace check{
+extern string message;
 
+namespace check{
+	struct ReactPoint
+	{
+		Point leftTop;
+
+		Point rightDown;
+	};
 	class WatershedSegmenter{
 	private:
 		cv::Mat markers;
@@ -30,7 +37,7 @@ namespace check{
 
 	vector<Rect> getBuddingRect(cv::Mat& image, vector<vector<cv::Point>>& contours);
 	vector<Rect> getBuddingRect(cv::Mat& image, vector<Mat>& contours);
-	void detctColor(const char* path, int background = 40);
+	vector<Rect> detctColor(const char* path, int background = 40);
 
 	//ÓÃ8*8µÄ¾ØÐÎ¸¯Ê´
 	void detctColorErode(const char* path, int background = 40);

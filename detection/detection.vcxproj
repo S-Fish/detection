@@ -34,6 +34,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -69,7 +70,10 @@
     <Import Project="..\..\..\..\..\study\程序代码\c++\opencv\test1\test1\opencv_debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ExecutablePath>E:\opencv\build\x64\vc12\bin;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>E:\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -86,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Program Files\MySQL\MySQL Server 5.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cluster.h" />
     <ClInclude Include="decolor.h" />
     <ClInclude Include="extractGLCMFeatures.h" />
     <ClInclude Include="histogram1D.h" />
@@ -129,6 +135,7 @@
     <ClInclude Include="RectMerge.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cluster.cpp" />
     <ClCompile Include="databaseMySql.cpp" />
     <ClCompile Include="decolor.cpp" />
     <ClCompile Include="extractCLCMFeatures.cpp" />
